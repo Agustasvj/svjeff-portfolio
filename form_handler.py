@@ -5,9 +5,9 @@ from flask import Flask, request, render_template
 app = Flask(__name__)
 
 # Your Telegram bot token (get from @BotFather)
-BOT_TOKEN = '7643200755:AAEnY79hQQ98ovHCmOp-IOcscwvDGqUbEMM'
+BOT_TOKEN = 'BOT TOKEN HERE'
 # Your Telegram chat ID (get from @userinfobot)
-CHAT_ID = '6214817938'
+CHAT_ID = 'CHAT ID'
 
 # Initialize the Telegram bot
 bot = telebot.TeleBot(BOT_TOKEN)
