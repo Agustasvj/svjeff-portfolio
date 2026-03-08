@@ -1,4 +1,4 @@
-// Page navigation functionality
+// Page navigation functionality with card stacking
 const navLinks = document.querySelectorAll('[data-nav-link]');
 const pages = document.querySelectorAll('[data-page]');
 
@@ -14,10 +14,12 @@ navLinks.forEach((link) => {
     // Hide all pages
     pages.forEach((page) => page.classList.remove('active'));
     
-    // Show the corresponding page
+    // Show the corresponding page with card animation
     const pageName = e.target.textContent.toLowerCase();
     const activePage = document.querySelector(`[data-page="${pageName}"]`);
     if (activePage) {
+      // Trigger reflow to ensure animation plays
+      activePage.offsetHeight;
       activePage.classList.add('active');
     }
   });
@@ -89,4 +91,46 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && modal.classList.contains('active')) {
     closeModal();
   }
+});
+
+// Project and Certification item expand/collapse functionality
+const projectItems = document.querySelectorAll('.projects-list .project-item, .certifications .project-item');
+projectItems.forEach((item) => {
+  item.addEventListener('click', (e) => {
+    // If clicking a link or image, don't expand
+    if (e.target.tagName === 'A' || e.target.tagName === 'IMG') {
+      return;
+    }
+    
+    // Toggle expanded class
+    const isExpanded = item.classList.contains('expanded');
+    
+    // Find the parent list (projects-list or certifications section)
+    const parentList = item.closest('.projects-list') || item.closest('.certifications');
+    
+    // Close all other expanded items in the same section
+    const itemsInSection = parentList ? parentList.querySelectorAll('.project-item') : [];
+    itemsInSection.forEach((otherItem) => {
+      if (otherItem !== item && otherItem.classList.contains('expanded')) {
+        otherItem.classList.remove('expanded');
+      }
+    });
+    
+    // Toggle current item
+    if (!isExpanded) {
+      item.classList.add('expanded');
+      if (parentList) {
+        parentList.classList.add('has-expanded');
+      }
+    } else {
+      item.classList.remove('expanded');
+      // Remove has-expanded if no items are expanded in this section
+      if (parentList) {
+        const hasExpanded = parentList.querySelector('.project-item.expanded');
+        if (!hasExpanded) {
+          parentList.classList.remove('has-expanded');
+        }
+      }
+    }
+  });
 });
