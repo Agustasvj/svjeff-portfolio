@@ -54,15 +54,12 @@ export default function Skills() {
                 <h3 className="skills__card-title">{category.name}</h3>
               </div>
 
-              {/* Skill Chips Cloud (No arbitrary progress bars) */}
+              {/* Skill Chips Cloud (Clean list of skills, no proficiency ratings) */}
               <div className="skills__tags-wrap">
                 {category.skills.map((skill) => (
                   <div key={skill.name} className="skill-chip">
                     <span className="skill-chip__dot" />
                     <span className="skill-chip__name">{skill.name}</span>
-                    {skill.level && (
-                      <span className="skill-chip__level mono">{skill.level}</span>
-                    )}
                   </div>
                 ))}
               </div>

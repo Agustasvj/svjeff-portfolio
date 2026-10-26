@@ -155,6 +155,7 @@ export interface StaticProject {
   outcome?: string;
   objective: string;
   status: string;
+  githubUrl?: string;
   modelUrl?: string;
   modelRotation?: [number, number, number];
   images?: ProjectImage[];

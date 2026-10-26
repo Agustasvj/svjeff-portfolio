@@ -51,9 +51,9 @@ export default function ProjectWorkspace({ project, onClose }: ProjectWorkspaceP
   const category = categoryConfig[project.category];
 
   // Determine interactive viewer capabilities
-  const isPCBProject = project.id === 'sound-reactive-led' || project.category === 'pcb';
-  const hasCADModel = Boolean(project.modelUrl) || ['sxs-spaceframe', 'handheld-controller', 'mtb-frame'].includes(project.id);
-  const hasArchDiagram = ['esp32-face-recognition', 'sound-reactive-led'].includes(project.id);
+  const isPCBProject = project.category === 'pcb';
+  const hasCADModel = Boolean(project.modelUrl) || ['sxs-spaceframe', 'mtb-frame', 'sim-wheel', 'handheld-controller'].includes(project.id);
+  const hasArchDiagram = ['vforce-txrx', 'afyalink', 'sim-wheel'].includes(project.id);
 
   return (
     <motion.div
@@ -88,6 +88,27 @@ export default function ProjectWorkspace({ project, onClose }: ProjectWorkspaceP
               <span className="workspace__badge mono" style={{ color: 'var(--color-accent-green)' }}>
                 ID: {project.id}
               </span>
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="workspace__badge mono"
+                  style={{
+                    color: 'var(--color-accent-blue)',
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                  title="View repository on GitHub"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                  </svg>
+                  GitHub ↗
+                </a>
+              )}
             </div>
             <h2 className="workspace__title">{project.title}</h2>
             <p className="workspace__subtitle">{project.description}</p>
@@ -204,6 +225,34 @@ export default function ProjectWorkspace({ project, onClose }: ProjectWorkspaceP
                 </div>
               )}
 
+              {project.githubUrl && (
+                <div className="workspace__section">
+                  <h3 className="workspace__section-title">Source Repository</h3>
+                  <p style={{ marginBottom: 'var(--space-2)' }}>
+                    Engineering source code, setup instructions, and firmware are maintained on GitHub:
+                  </p>
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn--secondary mono"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      textDecoration: 'none',
+                      fontSize: 'var(--text-sm)',
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    <span>{project.githubUrl}</span>
+                    <span style={{ color: 'var(--color-accent-green)' }}>↗</span>
+                  </a>
+                </div>
+              )}
+
               <div className="workspace__section">
                 <h3 className="workspace__section-title">Technologies & Hardware Tooling</h3>
                 <div className="workspace__tech-grid">
@@ -232,23 +281,32 @@ export default function ProjectWorkspace({ project, onClose }: ProjectWorkspaceP
                   </div>
                 </>
               ) : hasCADModel ? (
-                <ThreeDViewer
-                  modelType={(['sxs-spaceframe', 'handheld-controller', 'mtb-frame'].includes(project.id) ? project.id : 'sxs-spaceframe') as 'sxs-spaceframe' | 'handheld-controller' | 'mtb-frame'}
-                  modelUrl={project.modelUrl}
-                  modelRotation={project.modelRotation}
-                  title={`${project.title} (3D CAD View)`}
-                  onExit={() => setActiveTab('overview')}
-                />
+                <>
+                  <ThreeDViewer
+                    modelType={(['sxs-spaceframe', 'handheld-controller', 'mtb-frame'].includes(project.id) ? project.id : 'sxs-spaceframe') as 'sxs-spaceframe' | 'handheld-controller' | 'mtb-frame'}
+                    modelUrl={project.modelUrl}
+                    modelRotation={project.modelRotation}
+                    title={`${project.title} (3D CAD View)`}
+                    onExit={() => setActiveTab('overview')}
+                  />
+                  {hasArchDiagram && (
+                    <div style={{ marginTop: 'var(--space-6)' }}>
+                      <ArchitectureDiagram defaultProjectId={project.id} />
+                    </div>
+                  )}
+                </>
               ) : hasArchDiagram ? (
                 <>
                   <ArchitectureDiagram defaultProjectId={project.id} />
-                  <div style={{ marginTop: 'var(--space-6)' }}>
-                    <ThreeDViewer
-                      modelType="esp32"
-                      title="ESP32-CAM Edge Hardware (3D View)"
-                      onExit={() => setActiveTab('overview')}
-                    />
-                  </div>
+                  {project.id === 'vforce-txrx' && (
+                    <div style={{ marginTop: 'var(--space-6)' }}>
+                      <ThreeDViewer
+                        modelType="esp32"
+                        title="ESP32 Wireless Receiver Hardware (3D View)"
+                        onExit={() => setActiveTab('overview')}
+                      />
+                    </div>
+                  )}
                 </>
               ) : (
                 <WebPreview projectTitle={project.title} />
@@ -256,7 +314,10 @@ export default function ProjectWorkspace({ project, onClose }: ProjectWorkspaceP
 
               {/* Auxiliary Git Graph for firmware / software insight */}
               <div style={{ marginTop: 'var(--space-6)' }}>
-                <GitHistoryDiagram repoName={project.id} defaultBranch="main" />
+                <GitHistoryDiagram
+                  repoName={project.githubUrl ? project.githubUrl.split('/').pop()?.replace('.git', '') || project.id : project.id}
+                  defaultBranch="main"
+                />
               </div>
             </div>
           )}
