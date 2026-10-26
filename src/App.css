@@ -1,0 +1,70 @@
+/* ============================================================
+   APPLICATION CORE STYLES & BUTTON PRIMITIVES
+   ============================================================ */
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+main {
+  flex: 1;
+}
+
+/* ── Button Primitives ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  text-decoration: none;
+  border: 1px solid transparent;
+}
+
+.btn--primary {
+  background: var(--color-accent-green);
+  color: var(--color-text-inverse);
+  box-shadow: 0 0 15px var(--color-accent-green-glow);
+}
+
+.btn--primary:hover {
+  background: #a3f08d;
+  box-shadow: 0 0 25px rgba(145, 232, 120, 0.45);
+  transform: translateY(-1px);
+  color: var(--color-text-inverse);
+}
+
+.btn--secondary {
+  background: var(--color-bg-elevated);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.btn--secondary:hover {
+  background: var(--color-bg-card);
+  border-color: var(--color-accent-green);
+  color: var(--color-accent-green);
+  transform: translateY(-1px);
+}
+
+.btn--amber {
+  background: var(--color-accent-amber);
+  color: var(--color-text-inverse);
+  box-shadow: 0 0 15px var(--color-accent-amber-dim);
+}
+
+.btn--amber:hover {
+  background: #ffc46a;
+  transform: translateY(-1px);
+}

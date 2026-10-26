@@ -1,0 +1,82 @@
+name: Sync GitHub Portfolio Projects
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Every 6 hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run Sync Ingestion Script
+        run: |
+          node -e '
+            const https = require("https");
+            const fs = require("fs");
+
+            const username = "Agustasvj";
+            const topic = "portfolio";
+
+            const options = {
+              hostname: "api.github.com",
+              path: `/users/${username}/repos?per_page=100`,
+              headers: {
+                "User-Agent": "svjeff-portfolio-sync",
+                "Accept": "application/vnd.github.mercy-preview+json"
+              }
+            };
+
+            https.get(options, (res) => {
+              let data = "";
+              res.on("data", chunk => data += chunk);
+              res.on("end", () => {
+                try {
+                  const repos = JSON.parse(data);
+                  if (Array.isArray(repos)) {
+                    const portfolioRepos = repos.filter(r => r.topics && r.topics.includes(topic));
+                    console.log(`Discovered ${portfolioRepos.length} portfolio repositories.`);
+                    
+                    const output = {
+                      syncTimestamp: new Date().toISOString(),
+                      status: "success",
+                      projectCount: portfolioRepos.length,
+                      repositories: portfolioRepos.map(r => ({
+                        name: r.name,
+                        url: r.html_url,
+                        description: r.description,
+                        stars: r.stargazers_count,
+                        language: r.language
+                      }))
+                    };
+                    
+                    fs.mkdirSync("./public/data", { recursive: true });
+                    fs.writeFileSync("./public/data/projects.json", JSON.stringify(output, null, 2));
+                    console.log("Updated public/data/projects.json successfully.");
+                  }
+                } catch(e) {
+                  console.error("Failed to parse JSON:", e);
+                }
+              });
+            }).on("error", (err) => {
+              console.error("HTTP error:", err);
+            });
+          '
+
+      - name: Commit & Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/projects.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore(sync): update projects.json telemetry [skip ci]" && git push)

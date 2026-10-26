@@ -1,0 +1,37 @@
+{
+  "$schema": "https://agustasvj.github.io/svjeff-portfolio/schemas/project-manifest.json",
+  "schemaVersion": 1,
+  "featured": true,
+  "featuredOrder": 1,
+  "title": "ESP32 Break-Beam Face Recognition System",
+  "description": "Embedded identity verification system utilizing ESP32-CAM optical capture triggered by laser break-beam sensors.",
+  "category": "iot",
+  "stage": "prototype",
+  "technologies": [
+    "ESP32-CAM",
+    "NodeMCU",
+    "Arduino Framework",
+    "Break-beam sensors",
+    "Embedded C++"
+  ],
+  "diagram": {
+    "architecture": "esp32-face-recognition"
+  },
+  "preview": {
+    "type": "web",
+    "url": "https://agustasvj.github.io/svjeff-portfolio/#project-esp32-face-recognition"
+  },
+  "media": {
+    "thumbnail": "/assets/images/handheld-controller-iso.png",
+    "images": [
+      "/assets/images/handheld-controller-iso.png",
+      "/assets/images/handheld-controller-side.png"
+    ]
+  },
+  "milestones": [
+    { "name": "Breadboard optical circuit test", "completed": true },
+    { "name": "ESP32-CAM image capture interrupt", "completed": true },
+    { "name": "Edge face detection neural network inference", "completed": true },
+    { "name": "Production PCB fabrication & enclosure", "completed": false }
+  ]
+}

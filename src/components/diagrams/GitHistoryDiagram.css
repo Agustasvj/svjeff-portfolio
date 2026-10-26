@@ -1,0 +1,261 @@
+/* ============================================================
+   GIT HISTORY DIAGRAM STYLES
+   ============================================================ */
+
+.git-diagram {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.git-diagram__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border-subtle);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.git-diagram__repo-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-accent-green);
+}
+
+.git-diagram__repo-name {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+}
+
+.git-diagram__branch-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+}
+
+.git-diagram__stats {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.git-diagram__sync-state {
+  color: var(--color-accent-green);
+}
+
+/* Body: Split View */
+.git-diagram__body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  min-height: 340px;
+}
+
+/* Timeline */
+.git-diagram__timeline {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: 400px;
+  background: var(--color-bg-primary);
+  border-right: 1px solid var(--color-border-subtle);
+}
+
+.git-diagram__row {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-6);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.git-diagram__row:hover {
+  background: var(--color-bg-card);
+}
+
+.git-diagram__row.selected {
+  background: var(--color-bg-elevated);
+  border-left: 3px solid var(--color-accent-green);
+}
+
+/* Rail */
+.git-diagram__rail {
+  width: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  align-self: stretch;
+  margin-right: var(--space-4);
+  flex-shrink: 0;
+}
+
+.git-diagram__line-top,
+.git-diagram__line-bottom {
+  width: 2px;
+  flex: 1;
+  background: var(--color-border);
+}
+
+.git-diagram__node {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-accent-green);
+  z-index: 1;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.git-diagram__node.merge {
+  border-color: var(--color-accent-amber);
+  border-radius: var(--radius-sm);
+}
+
+.git-diagram__node.active {
+  background: var(--color-accent-green);
+  box-shadow: 0 0 10px var(--color-accent-green);
+  transform: scale(1.3);
+}
+
+.git-diagram__commit-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  overflow: hidden;
+}
+
+.git-diagram__commit-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.git-diagram__sha {
+  font-size: 11px;
+  color: var(--color-accent-green);
+}
+
+.git-diagram__date {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+.git-diagram__msg {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Details Side Panel */
+.git-diagram__details {
+  padding: var(--space-6);
+  background: var(--color-bg-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.git-diagram__details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.git-diagram__details-label {
+  font-size: 10px;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-text-tertiary);
+}
+
+.git-diagram__sha-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  background: var(--color-accent-green-dim);
+  color: var(--color-accent-green);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-accent-green);
+}
+
+.git-diagram__details-msg {
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-medium);
+}
+
+.git-diagram__details-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--color-border-subtle);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.git-diagram__meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.git-diagram__meta-item .label {
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+}
+
+.git-diagram__meta-item .value {
+  font-size: var(--text-xs);
+  color: var(--color-text-primary);
+}
+
+.git-diagram__meta-item .sha-full {
+  font-size: 10px;
+  word-break: break-all;
+  color: var(--color-text-secondary);
+}
+
+.git-diagram__btn-view {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: var(--text-xs);
+  transition: all var(--duration-fast) var(--ease-out);
+  margin-top: auto;
+}
+
+.git-diagram__btn-view:hover {
+  border-color: var(--color-accent-green);
+  color: var(--color-accent-green);
+}
+
+@media (max-width: 860px) {
+  .git-diagram__body {
+    grid-template-columns: 1fr;
+  }
+  .git-diagram__details {
+    border-top: 1px solid var(--color-border);
+  }
+}

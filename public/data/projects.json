@@ -1,0 +1,76 @@
+{
+  "syncTimestamp": "2026-10-25T15:00:00Z",
+  "status": "success",
+  "projects": [
+    {
+      "id": "esp32-face-recognition",
+      "manifest": {
+        "schemaVersion": 1,
+        "featured": true,
+        "title": "ESP32 Break-Beam Face Recognition System",
+        "description": "A low-cost embedded identity verification system using ESP32-CAM triggered by break-beam sensors.",
+        "category": "iot",
+        "stage": "prototype",
+        "technologies": ["ESP32-CAM", "NodeMCU", "Arduino Framework", "Break-beam sensors", "Embedded computer vision"]
+      },
+      "repository": {
+        "name": "esp32-face-recognition",
+        "fullName": "Agustasvj/esp32-face-recognition",
+        "url": "https://github.com/Agustasvj/esp32-face-recognition",
+        "description": "Break-beam triggered optical security and edge face recognition device",
+        "topics": ["portfolio", "esp32", "iot", "embedded-systems", "security"],
+        "defaultBranch": "main",
+        "language": "C++",
+        "stargazersCount": 4,
+        "forksCount": 1,
+        "openIssuesCount": 0,
+        "createdAt": "2026-01-10T12:00:00Z",
+        "updatedAt": "2026-03-20T14:32:00Z",
+        "pushedAt": "2026-03-20T14:32:00Z",
+        "isArchived": false,
+        "isFork": false,
+        "hasPages": false,
+        "homepage": null,
+        "license": "MIT"
+      },
+      "commits": [
+        {
+          "sha": "9f8b2c4e1a6d3f5728b94017c6e4a2b189d0e1f3",
+          "shortSha": "9f8b2c4",
+          "message": "release: v2.1.0 telemetry streaming over MQTT",
+          "author": "Jeffrey Murithi",
+          "date": "2026-03-20T14:32:00Z",
+          "url": "https://github.com/Agustasvj/esp32-face-recognition",
+          "parents": ["4a7d1e8"]
+        }
+      ],
+      "branches": [
+        { "name": "main", "isDefault": true, "lastCommitSha": "9f8b2c4", "lastCommitDate": "2026-03-20T14:32:00Z" }
+      ],
+      "pullRequests": [],
+      "releases": [
+        {
+          "tagName": "v2.1.0",
+          "name": "v2.1.0 Optical Interrupt Release",
+          "body": "Production build firmware with hardware debounce and MQTT telemetry",
+          "createdAt": "2026-03-20T14:30:00Z",
+          "url": "https://github.com/Agustasvj/esp32-face-recognition/releases",
+          "isDraft": false,
+          "isPrerelease": false
+        }
+      ],
+      "workflowRuns": [
+        {
+          "id": 101,
+          "name": "PlatformIO CI Build",
+          "status": "completed",
+          "conclusion": "success",
+          "createdAt": "2026-03-20T14:35:00Z",
+          "url": "https://github.com/Agustasvj/esp32-face-recognition/actions"
+        }
+      ],
+      "lastSyncTimestamp": "2026-10-25T15:00:00Z",
+      "syncStatus": "success"
+    }
+  ]
+}

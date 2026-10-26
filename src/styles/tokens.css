@@ -1,0 +1,134 @@
+/* ============================================================
+   DESIGN TOKENS — Engineering Portfolio 2.0
+   All colours, spacing, typography, radii, shadows, and motion
+   centralised here for global theming.
+   ============================================================ */
+
+:root {
+  /* ── Colour Palette ── */
+  --color-bg-primary: #101214;
+  --color-bg-secondary: #181B1F;
+  --color-bg-card: #202429;
+  --color-bg-elevated: #272C33;
+  --color-bg-overlay: rgba(16, 18, 20, 0.92);
+  --color-bg-glass: rgba(32, 36, 41, 0.65);
+
+  --color-text-primary: #F5F6F7;
+  --color-text-secondary: #A6ADB5;
+  --color-text-tertiary: #6B7380;
+  --color-text-inverse: #101214;
+
+  --color-accent-green: #91E878;
+  --color-accent-green-dim: rgba(145, 232, 120, 0.15);
+  --color-accent-green-glow: rgba(145, 232, 120, 0.3);
+  --color-accent-amber: #FFB547;
+  --color-accent-amber-dim: rgba(255, 181, 71, 0.15);
+
+  --color-border: #353B42;
+  --color-border-subtle: #2A2F36;
+  --color-border-hover: #4A5260;
+  --color-border-accent: var(--color-accent-green);
+
+  --color-success: #4ADE80;
+  --color-warning: #FBBF24;
+  --color-error: #F87171;
+  --color-info: #60A5FA;
+
+  /* ── Typography ── */
+  --font-display: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+  --font-body: 'Inter', 'Helvetica Neue', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  --text-xs: 0.6875rem;    /* 11px */
+  --text-sm: 0.8125rem;    /* 13px */
+  --text-base: 0.9375rem;  /* 15px */
+  --text-md: 1rem;         /* 16px */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.375rem;     /* 22px */
+  --text-2xl: 1.75rem;     /* 28px */
+  --text-3xl: 2.25rem;     /* 36px */
+  --text-4xl: 3rem;        /* 48px */
+  --text-5xl: 3.75rem;     /* 60px */
+  --text-hero: clamp(2.5rem, 5vw, 4.5rem);
+
+  --leading-tight: 1.15;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extrabold: 800;
+
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.05em;
+  --tracking-wider: 0.1em;
+
+  /* ── Spacing ── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* ── Border Radius ── */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 50px rgba(0, 0, 0, 0.6);
+  --shadow-glow-green: 0 0 20px rgba(145, 232, 120, 0.15);
+  --shadow-glow-amber: 0 0 20px rgba(255, 181, 71, 0.15);
+
+  /* ── Transitions ── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --duration-slower: 600ms;
+
+  /* ── Z-Index Scale ── */
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-nav: 300;
+  --z-overlay: 400;
+  --z-modal: 500;
+  --z-toast: 600;
+
+  /* ── Layout ── */
+  --container-max: 1400px;
+  --container-content: 1100px;
+  --nav-height: 64px;
+  --sidebar-width: 320px;
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-normal: 0ms;
+    --duration-slow: 0ms;
+    --duration-slower: 0ms;
+  }
+}
