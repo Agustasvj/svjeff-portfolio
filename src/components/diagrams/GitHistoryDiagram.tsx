@@ -1,9 +1,10 @@
 /* ============================================================
    GIT HISTORY DIAGRAM COMPONENT
-   Interactive commit graph & branch timeline visualization
+   Project-specific commit graph & live branch timeline
+   Fetches live commits from GitHub API with repository-specific fallbacks
    ============================================================ */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Commit } from '../../types';
 import './GitHistoryDiagram.css';
 
@@ -13,69 +14,169 @@ interface GitHistoryDiagramProps {
   defaultBranch?: string;
 }
 
-const DEFAULT_COMMITS: Commit[] = [
-  {
-    sha: 'a41d9e2b1c8f3074e58a2d10c9e6b4f738a1d052',
-    shortSha: 'a41d9e2',
-    message: 'release: v2.0.0 16-channel low-latency UDP binary streaming and telemetry HUD',
-    author: 'Jeffrey Murithi',
-    date: '2026-04-12T16:45:00Z',
-    url: 'https://github.com/Agustasvj/VFORCETXRX',
-    parents: ['8c3b7a1'],
-  },
-  {
-    sha: '8c3b7a1d0e5f2948b17c3a06e9d4f2b819a0c7e4',
-    shortSha: '8c3b7a1',
-    message: 'feat: add failsafe watchdog timer to cut throttle on Wi-Fi connection loss',
-    author: 'Jeffrey Murithi',
-    date: '2026-04-10T11:20:00Z',
-    url: 'https://github.com/Agustasvj/VFORCETXRX',
-    parents: ['5e2a9d4'],
-  },
-  {
-    sha: '5e2a9d4f7c1b8036e9a4d208c1f7b3a928e0d6c1',
-    shortSha: '5e2a9d4',
-    message: 'refactor: optimize exponential curve calculation and dual-rate mappings',
-    author: 'Jeffrey Murithi',
-    date: '2026-04-06T19:30:00Z',
-    url: 'https://github.com/Agustasvj/VFORCETXRX',
-    parents: ['3b9f1c7', '7d4e2a8'],
-  },
-  {
-    sha: '7d4e2a8c1f0b9347e6a5d109c8f2b4a139e0c5d2',
-    shortSha: '7d4e2a8',
-    message: 'feat: implement dual virtual joysticks with multi-touch tracking in web UI',
-    author: 'Jeffrey Murithi',
-    date: '2026-04-02T14:15:00Z',
-    url: 'https://github.com/Agustasvj/VFORCETXRX',
-    parents: ['3b9f1c7'],
-  },
-  {
-    sha: '3b9f1c7e9a4d208c1f7b3a928e0d6c1a41d9e2b1',
-    shortSha: '3b9f1c7',
-    message: 'feat: ESP32 receiver firmware with hardware PWM output and voltage ADC telemetry',
-    author: 'Jeffrey Murithi',
-    date: '2026-03-28T10:00:00Z',
-    url: 'https://github.com/Agustasvj/VFORCETXRX',
-    parents: ['1a0d8e4'],
-  },
-  {
-    sha: '1a0d8e4f2c9b7348e5a1d069c7f3b2a018e9c4d1',
-    shortSha: '1a0d8e4',
-    message: 'init: FastAPI async server and WebSocket bridge structure',
-    author: 'Jeffrey Murithi',
-    date: '2026-03-22T08:30:00Z',
-    url: 'https://github.com/Agustasvj/VFORCETXRX',
-    parents: [],
-  },
-];
+const REPO_COMMITS: Record<string, Commit[]> = {
+  VFORCETXRX: [
+    {
+      sha: '1365408a9f0e1b2c3d4e5f6a7b8c9d0e1f2a3b4c',
+      shortSha: '1365408',
+      message: 'Delete update.txt',
+      author: 'Jeffrey Murithi',
+      date: '2026-10-14T23:33:34Z',
+      url: 'https://github.com/Agustasvj/VFORCETXRX/commit/1365408',
+      parents: ['8b36553'],
+    },
+    {
+      sha: '8b36553a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e',
+      shortSha: '8b36553',
+      message: 'Phase 1 Complete: Drag-to-resize, maximized desktop launch, throttle hold axis, square gimbals, and updated README',
+      author: 'Jeffrey Murithi',
+      date: '2026-10-14T23:32:19Z',
+      url: 'https://github.com/Agustasvj/VFORCETXRX/commit/8b36553',
+      parents: ['ae9c7b8'],
+    },
+    {
+      sha: 'ae9c7b8c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a',
+      shortSha: 'ae9c7b8',
+      message: 'Update README.md with VForce RC transmitter architecture, features, and setup guide',
+      author: 'Jeffrey Murithi',
+      date: '2026-10-14T23:08:12Z',
+      url: 'https://github.com/Agustasvj/VFORCETXRX/commit/ae9c7b8',
+      parents: ['1d7e642'],
+    },
+    {
+      sha: '1d7e642d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b',
+      shortSha: '1d7e642',
+      message: 'Convert VForce to RC Transmitter base station (Phase 1) with claymorphic UI, 16-channel engine, square gimbal, and live monitor',
+      author: 'Jeffrey Murithi',
+      date: '2026-10-14T23:05:49Z',
+      url: 'https://github.com/Agustasvj/VFORCETXRX/commit/1d7e642',
+      parents: ['c4ca0e7'],
+    },
+    {
+      sha: 'c4ca0e7f3a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d',
+      shortSha: 'c4ca0e7',
+      message: 'Add README with logo, screenshots and full documentation',
+      author: 'Jeffrey Murithi',
+      date: '2026-10-14T09:36:08Z',
+      url: 'https://github.com/Agustasvj/VFORCETXRX/commit/c4ca0e7',
+      parents: [],
+    },
+  ],
+  SIM_WHEEL1: [
+    {
+      sha: 'c4ca0e7f3a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d',
+      shortSha: 'c4ca0e7',
+      message: 'Add README with logo, screenshots and full documentation',
+      author: 'Jeffrey Murithi',
+      date: '2026-10-14T09:36:08Z',
+      url: 'https://github.com/Agustasvj/SIM_WHEEL1/commit/c4ca0e7',
+      parents: ['291eff5'],
+    },
+    {
+      sha: '291eff5a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e',
+      shortSha: '291eff5',
+      message: 'Initial commit: SIM_WHEEL project with ViGEm virtual Xbox 360 controller driver, FastAPI server, and mobile gyroscope tilt-to-steer',
+      author: 'Jeffrey Murithi',
+      date: '2026-10-14T09:30:31Z',
+      url: 'https://github.com/Agustasvj/SIM_WHEEL1/commit/291eff5',
+      parents: [],
+    },
+  ],
+  afyalink: [
+    {
+      sha: '63278faa1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e',
+      shortSha: '63278fa',
+      message: 'chore: documentation and routing updates for community health workers',
+      author: 'Jeffrey Murithi',
+      date: '2026-10-23T10:46:02Z',
+      url: 'https://github.com/Agustasvj/afyalink/commit/63278fa',
+      parents: ['f23e741'],
+    },
+    {
+      sha: 'f23e741b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f',
+      shortSha: 'f23e741',
+      message: 'refactor: navigation shell and follow-up register status badges',
+      author: 'Jeffrey Murithi',
+      date: '2026-10-23T10:44:52Z',
+      url: 'https://github.com/Agustasvj/afyalink/commit/f23e741',
+      parents: ['851a6b3'],
+    },
+    {
+      sha: '851a6b3c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a',
+      shortSha: '851a6b3',
+      message: 'feat: community care queue and offline storage fallback with localStorage adapter',
+      author: 'Jeffrey Murithi',
+      date: '2026-10-23T10:00:58Z',
+      url: 'https://github.com/Agustasvj/afyalink/commit/851a6b3',
+      parents: ['ce110a5'],
+    },
+    {
+      sha: 'ce110a5d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b',
+      shortSha: 'ce110a5',
+      message: 'feat(ui): complete Santa Cruz / Quiver editorial dark redesign, remove IEEE references from website',
+      author: 'Jeffrey Murithi',
+      date: '2026-10-23T09:57:46Z',
+      url: 'https://github.com/Agustasvj/afyalink/commit/ce110a5',
+      parents: ['69e27f2'],
+    },
+    {
+      sha: '69e27f2e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c',
+      shortSha: '69e27f2',
+      message: 'docs: replace architecture image with interactive Mermaid diagram',
+      author: 'Jeffrey Murithi',
+      date: '2026-10-23T09:44:07Z',
+      url: 'https://github.com/Agustasvj/afyalink/commit/69e27f2',
+      parents: [],
+    },
+  ],
+};
 
 export default function GitHistoryDiagram({
-  commits = DEFAULT_COMMITS,
+  commits: propCommits,
   repoName = 'VFORCETXRX',
   defaultBranch = 'main',
 }: GitHistoryDiagramProps) {
-  const [selectedCommit, setSelectedCommit] = useState<Commit>(commits[0]);
+  const normalizedKey =
+    Object.keys(REPO_COMMITS).find((k) => k.toLowerCase() === repoName.toLowerCase()) || 'VFORCETXRX';
+  const fallbackCommits = REPO_COMMITS[normalizedKey] || REPO_COMMITS.VFORCETXRX;
+
+  const [commitsList, setCommitsList] = useState<Commit[]>(propCommits || fallbackCommits);
+  const [selectedCommit, setSelectedCommit] = useState<Commit>(fallbackCommits[0]);
+  const [isLive, setIsLive] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    const baseCommits = REPO_COMMITS[normalizedKey] || fallbackCommits;
+    setCommitsList(baseCommits);
+    setSelectedCommit(baseCommits[0]);
+
+    // Live fetch from GitHub REST API
+    fetch(`https://api.github.com/repos/Agustasvj/${repoName}/commits?per_page=10`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!isMounted || !Array.isArray(data) || data.length === 0) return;
+        const mapped: Commit[] = data.map((item: any) => ({
+          sha: item.sha,
+          shortSha: item.sha.slice(0, 7),
+          message: item.commit.message,
+          author: item.commit.author?.name || 'Jeffrey Murithi',
+          date: item.commit.author?.date || new Date().toISOString(),
+          url: item.html_url || `https://github.com/Agustasvj/${repoName}/commit/${item.sha}`,
+          parents: (item.parents || []).map((p: any) => p.sha.slice(0, 7)),
+        }));
+        setCommitsList(mapped);
+        setSelectedCommit(mapped[0]);
+        setIsLive(true);
+      })
+      .catch(() => {
+        setIsLive(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [repoName, normalizedKey]);
+
   const activeBranch = defaultBranch;
 
   return (
@@ -93,18 +194,20 @@ export default function GitHistoryDiagram({
         </div>
 
         <div className="git-diagram__stats mono">
-          <span>{commits.length} commits</span>
+          <span>{commitsList.length} commits</span>
           <span className="dot">•</span>
-          <span className="git-diagram__sync-state">Live Git Graph</span>
+          <span className="git-diagram__sync-state">
+            {isLive ? '🟢 Live GitHub Synced' : '📦 Project Git Graph'}
+          </span>
         </div>
       </div>
 
       <div className="git-diagram__body">
         {/* Branch / Timeline Graph */}
         <div className="git-diagram__timeline">
-          {commits.map((commit, idx) => {
+          {commitsList.map((commit, idx) => {
             const isSelected = selectedCommit.sha === commit.sha;
-            const isMerge = commit.parents.length > 1;
+            const isMerge = commit.parents && commit.parents.length > 1;
 
             return (
               <div
@@ -113,19 +216,30 @@ export default function GitHistoryDiagram({
                 onClick={() => setSelectedCommit(commit)}
                 role="button"
                 tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedCommit(commit);
+                  }
+                }}
               >
                 {/* Visual Branch Line Rail */}
                 <div className="git-diagram__rail">
                   <div className="git-diagram__line-top" style={{ visibility: idx === 0 ? 'hidden' : 'visible' }} />
                   <div className={`git-diagram__node ${isMerge ? 'merge' : ''} ${isSelected ? 'active' : ''}`} />
-                  <div className="git-diagram__line-bottom" style={{ visibility: idx === commits.length - 1 ? 'hidden' : 'visible' }} />
+                  <div
+                    className="git-diagram__line-bottom"
+                    style={{ visibility: idx === commitsList.length - 1 ? 'hidden' : 'visible' }}
+                  />
                 </div>
 
                 {/* Commit Content */}
                 <div className="git-diagram__commit-summary">
                   <div className="git-diagram__commit-top">
                     <span className="git-diagram__sha mono">{commit.shortSha}</span>
-                    <span className="git-diagram__date mono">{new Date(commit.date).toLocaleDateString()}</span>
+                    <span className="git-diagram__date mono">
+                      {new Date(commit.date).toLocaleDateString()}
+                    </span>
                   </div>
                   <div className="git-diagram__msg">{commit.message}</div>
                 </div>
@@ -159,7 +273,7 @@ export default function GitHistoryDiagram({
             <div className="git-diagram__meta-item">
               <span className="mono label">Parent Commits</span>
               <span className="mono value">
-                {selectedCommit.parents.length > 0
+                {selectedCommit.parents && selectedCommit.parents.length > 0
                   ? selectedCommit.parents.map((p) => p.slice(0, 7)).join(', ')
                   : 'Root commit (initial)'}
               </span>

@@ -1,7 +1,7 @@
 /* ============================================================
    ARCHITECTURE DIAGRAM COMPONENT
-   Interactive engineering block diagram for IoT & Embedded Systems
-   Supports node selection, pinout/bus inspection, and signal flow
+   Displays authentic system flowcharts with full-screen zoomable
+   inspection modal and interactive signal bus explorer.
    ============================================================ */
 
 import { useState } from 'react';
@@ -37,9 +37,40 @@ interface ArchitectureDiagramProps {
   defaultProjectId?: string;
 }
 
+interface CustomDiagramMeta {
+  title: string;
+  image: string;
+  sourceUrl: string;
+  description: string;
+}
+
+const CUSTOM_DIAGRAMS: Record<string, CustomDiagramMeta> = {
+  'vforce-txrx': {
+    title: 'VFORCE RC Transmitter & Base Station Architecture',
+    image: './assets/diagrams/vforce-txrx-diagram.png',
+    sourceUrl: 'https://github.com/Agustasvj/VFORCETXRX',
+    description:
+      'Complete system flow detailing RC Pilot interaction, Pilot Interfaces (Mobile Control Surface & PC Dashboard), Base Station WebSocket & API Server, 16-Channel Engine, and Hardware Receiver UDP stream.',
+  },
+  'sim-wheel': {
+    title: 'VForce Sim Wheel Virtual Controller System Architecture',
+    image: './assets/diagrams/sim-wheel-diagram.png',
+    sourceUrl: 'https://github.com/Agustasvj/SIM_WHEEL1',
+    description:
+      'Runtime architecture detailing Phone and PC Users, Mobile Controller & Driving View, FastAPI Server Runtime, Assetto Corsa Shared Memory Telemetry, and OS Gamepad Driver output.',
+  },
+  afyalink: {
+    title: 'AfyaLink Offline-First Continuity Platform Architecture',
+    image: './assets/diagrams/afyalink-diagram.png',
+    sourceUrl: 'https://github.com/Agustasvj/afyalink',
+    description:
+      'System component architecture detailing Health Worker & Community Member flows, App Routing, Local Storage Persistence, Supabase Cloud Store sync, Safety & Portability, and Follow-Up Domain models.',
+  },
+};
+
 const DEFAULT_ARCHITECTURES: Record<string, SystemArchitecture> = {
   'vforce-txrx': {
-    title: 'VForce RC TX/RX 16-Channel Telemetry Architecture',
+    title: 'VForce RC TX/RX Signal Flow',
     blocks: [
       {
         id: 'phone-ui',
@@ -117,19 +148,8 @@ const DEFAULT_ARCHITECTURES: Record<string, SystemArchitecture> = {
     ],
   },
   'sim-wheel': {
-    title: 'VForce Sim Wheel Virtual Controller Architecture',
+    title: 'VForce Sim Wheel Signal Flow',
     blocks: [
-      {
-        id: 'ergonomic-rim',
-        label: '3D Printed Wheel Rim',
-        sublabel: 'PORTABLE_WHEEL CAD Assembly',
-        category: 'actuator',
-        tech: 'Parametric CAD + 3D Print',
-        description: 'Ergonomic racing wheel rim featuring integral smartphone mounting cradle, thumb indents, and magnetic paddle shifters.',
-        interfaces: ['Mechanical Clamp', 'Tactile Shifter Springs'],
-        x: 10,
-        y: 25,
-      },
       {
         id: 'gyro-sensor',
         label: 'Smartphone Motion Sensors',
@@ -138,8 +158,8 @@ const DEFAULT_ARCHITECTURES: Record<string, SystemArchitecture> = {
         tech: 'DeviceOrientation Event API',
         description: 'Extracts real-time pitch, roll, and yaw angles (Alpha, Beta, Gamma) at 60Hz from mobile browser sensors with zero external hardware.',
         interfaces: ['HTML5 Orientation API', 'Touch Interface'],
-        x: 10,
-        y: 70,
+        x: 15,
+        y: 35,
       },
       {
         id: 'web-controller',
@@ -150,7 +170,7 @@ const DEFAULT_ARCHITECTURES: Record<string, SystemArchitecture> = {
         description: 'Provides touch buttons for paddle shifters, DRS, handbrake, and on-screen telemetry overlays with deadzone calibration.',
         interfaces: ['WebSocket Client', 'Haptic Vibration API'],
         x: 48,
-        y: 45,
+        y: 35,
       },
       {
         id: 'virtual-joystick-bridge',
@@ -160,8 +180,8 @@ const DEFAULT_ARCHITECTURES: Record<string, SystemArchitecture> = {
         tech: 'vJoy SDK / ViGEmBus',
         description: 'Translates mobile orientation angles and button taps into a native Windows DirectInput / XInput virtual gamepad controller device.',
         interfaces: ['WebSocket Server', 'Virtual USB Emulation'],
-        x: 75,
-        y: 35,
+        x: 48,
+        y: 80,
       },
       {
         id: 'sim-game',
@@ -171,19 +191,18 @@ const DEFAULT_ARCHITECTURES: Record<string, SystemArchitecture> = {
         tech: 'Assetto Corsa / F1 23 / Forza',
         description: 'Directly accepts steering axis input from the virtual controller driver with sub-millisecond response latency.',
         interfaces: ['DirectInput / XInput Axis'],
-        x: 90,
-        y: 75,
+        x: 85,
+        y: 80,
       },
     ],
     connections: [
       { from: 'gyro-sensor', to: 'web-controller', bus: 'GPIO', label: 'Gyroscope Telemetry' },
-      { from: 'ergonomic-rim', to: 'gyro-sensor', bus: 'GPIO', label: 'Physical Steering Input' },
       { from: 'web-controller', to: 'virtual-joystick-bridge', bus: 'Wi-Fi', label: 'Low-latency WebSockets' },
       { from: 'virtual-joystick-bridge', to: 'sim-game', bus: 'UART', label: 'Virtual DirectInput Axes' },
     ],
   },
-  'afyalink': {
-    title: 'AfyaLink Offline-First Continuity Architecture',
+  afyalink: {
+    title: 'AfyaLink Offline Continuity Signal Flow',
     blocks: [
       {
         id: 'client-pwa',
@@ -193,41 +212,30 @@ const DEFAULT_ARCHITECTURES: Record<string, SystemArchitecture> = {
         tech: 'TypeScript + TailwindCSS',
         description: 'Intuitive point-of-care clinical interface designed for low-connectivity rural health posts, clinics, and community health volunteers.',
         interfaces: ['ServiceWorker Cache', 'Responsive UI'],
-        x: 10,
-        y: 25,
-      },
-      {
-        id: 'qr-exchange',
-        label: 'Optical Patient Record QR',
-        sublabel: 'Zero-Network Transfer',
-        category: 'sensor',
-        tech: 'Compressed Encrypted QR Code',
-        description: 'Enables instant patient history and prescription transfers between non-networked clinics via high-density 2D optical barcodes.',
-        interfaces: ['Camera Scanner', 'Display QR Generator'],
-        x: 10,
-        y: 70,
+        x: 15,
+        y: 30,
       },
       {
         id: 'local-store',
         label: 'Offline Database Store',
-        sublabel: 'IndexedDB / PouchDB Cache',
+        sublabel: 'IndexedDB / LocalStorage Cache',
         category: 'compute',
         tech: 'Encrypted Browser Persistence',
         description: 'Provides durable local persistence for EHRs, diagnostic logs, and medication histories even during protracted blackout and cellular outage.',
-        interfaces: ['IndexedDB Driver', 'AES-256 Storage'],
+        interfaces: ['LocalStorage Driver', 'AES-256 Storage'],
         x: 48,
-        y: 45,
+        y: 30,
       },
       {
         id: 'sync-gateway',
         label: 'Delta Synchronization Gateway',
         sublabel: 'Background Sync Engine',
         category: 'cloud',
-        tech: 'CouchDB / Node.js Microservice',
+        tech: 'Supabase Cloud Store / Microservice',
         description: 'Performs bidirectional conflict resolution and incremental delta sync automatically once an Internet or SMS uplink is detected.',
         interfaces: ['RESTful HTTPS', 'WebSocket Sync'],
-        x: 75,
-        y: 35,
+        x: 82,
+        y: 30,
       },
       {
         id: 'central-moh',
@@ -237,22 +245,32 @@ const DEFAULT_ARCHITECTURES: Record<string, SystemArchitecture> = {
         tech: 'FHIR Compliant EHR Cloud',
         description: 'Centralized health record archive aggregating demographic statistics, disease surveillance data, and longitudinal care records.',
         interfaces: ['HL7 / FHIR API', 'SQL Data Lake'],
-        x: 90,
+        x: 82,
         y: 75,
       },
     ],
     connections: [
       { from: 'client-pwa', to: 'local-store', bus: 'SPI', label: 'Local Encrypted Transactions' },
-      { from: 'qr-exchange', to: 'client-pwa', bus: 'UART', label: 'Optical Barcode Transfer' },
       { from: 'local-store', to: 'sync-gateway', bus: 'Wi-Fi', label: 'Opportunistic HTTPS Sync' },
       { from: 'sync-gateway', to: 'central-moh', bus: 'Wi-Fi', label: 'FHIR Upstream Ingestion' },
     ],
   },
 };
 
-export default function ArchitectureDiagram({ architecture, defaultProjectId = 'vforce-txrx' }: ArchitectureDiagramProps) {
-  const activeArch = architecture || DEFAULT_ARCHITECTURES[defaultProjectId] || DEFAULT_ARCHITECTURES['vforce-txrx'];
-  const [selectedBlock, setSelectedBlock] = useState<ArchBlock | null>(activeArch?.blocks[1] || null);
+export default function ArchitectureDiagram({
+  architecture,
+  defaultProjectId = 'vforce-txrx',
+}: ArchitectureDiagramProps) {
+  const customDiagram = CUSTOM_DIAGRAMS[defaultProjectId];
+  const activeArch =
+    architecture || DEFAULT_ARCHITECTURES[defaultProjectId] || DEFAULT_ARCHITECTURES['vforce-txrx'];
+
+  const [viewMode, setViewMode] = useState<'diagram' | 'bus'>(
+    customDiagram ? 'diagram' : 'bus'
+  );
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [selectedBlock, setSelectedBlock] = useState<ArchBlock | null>(activeArch?.blocks[0] || null);
   const [activeFilter, setActiveFilter] = useState<string>('all');
 
   const categories = [
@@ -264,137 +282,248 @@ export default function ArchitectureDiagram({ architecture, defaultProjectId = '
     { key: 'cloud', label: 'Telemetry / Cloud' },
   ];
 
+  const handleZoomIn = () => setZoomLevel((z) => Math.min(z + 0.5, 3));
+  const handleZoomOut = () => setZoomLevel((z) => Math.max(z - 0.5, 1));
+  const handleResetZoom = () => setZoomLevel(1);
+
   return (
     <div className="arch-diagram">
+      {/* Header */}
       <div className="arch-diagram__header">
         <div className="arch-diagram__title-row">
           <span className="arch-diagram__badge mono">SYSTEM ARCHITECTURE</span>
-          <h3 className="arch-diagram__title">{activeArch.title}</h3>
+          <h3 className="arch-diagram__title">
+            {customDiagram ? customDiagram.title : activeArch.title}
+          </h3>
         </div>
 
-        <div className="arch-diagram__filters">
-          {categories.map((c) => (
+        <div className="arch-diagram__view-toggle">
+          {customDiagram && (
             <button
-              key={c.key}
-              className={`arch-diagram__filter-btn ${activeFilter === c.key ? 'active' : ''}`}
-              onClick={() => setActiveFilter(c.key)}
+              className={`arch-diagram__toggle-btn ${viewMode === 'diagram' ? 'active' : ''}`}
+              onClick={() => setViewMode('diagram')}
             >
-              {c.label}
+              Architecture Diagram
             </button>
-          ))}
+          )}
+          <button
+            className={`arch-diagram__toggle-btn ${viewMode === 'bus' ? 'active' : ''}`}
+            onClick={() => setViewMode('bus')}
+          >
+            Signal & Bus Flow
+          </button>
+          {customDiagram && viewMode === 'diagram' && (
+            <button
+              className="arch-diagram__toggle-btn mono"
+              onClick={() => {
+                setZoomLevel(1);
+                setLightboxOpen(true);
+              }}
+              title="Inspect Full Diagram"
+              style={{ color: 'var(--color-accent-green)' }}
+            >
+              Inspect 🔍
+            </button>
+          )}
         </div>
       </div>
 
-      <div className="arch-diagram__canvas-wrapper">
-        <div className="arch-diagram__canvas">
-          {/* Signal Bus Connection Lines (SVG) */}
-          <svg className="arch-diagram__lines" viewBox="0 0 1000 500" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#91E878" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#FFB547" stopOpacity="0.8" />
-              </linearGradient>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                <feMerge>
-                  <feMergeNode in="coloredBlur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-
-            {activeArch.connections.map((conn, idx) => {
-              const fromBlock = activeArch.blocks.find((b) => b.id === conn.from);
-              const toBlock = activeArch.blocks.find((b) => b.id === conn.to);
-              if (!fromBlock || !toBlock) return null;
-
-              const x1 = fromBlock.x * 10;
-              const y1 = fromBlock.y * 5;
-              const x2 = toBlock.x * 10;
-              const y2 = toBlock.y * 5;
-              const midX = (x1 + x2) / 2;
-
-              return (
-                <g key={idx} className="arch-diagram__connection-group">
-                  <path
-                    d={`M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`}
-                    className="arch-diagram__path-bg"
-                  />
-                  <path
-                    d={`M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`}
-                    className="arch-diagram__path-active"
-                    filter="url(#glow)"
-                  />
-                  {conn.label && (
-                    <text
-                      x={midX}
-                      y={(y1 + y2) / 2 - 8}
-                      className="arch-diagram__path-label"
-                      textAnchor="middle"
-                    >
-                      {conn.label} ({conn.bus})
-                    </text>
-                  )}
-                </g>
-              );
-            })}
-          </svg>
-
-          {/* Architecture Blocks */}
-          {activeArch.blocks.map((block) => {
-            const isDimmed = activeFilter !== 'all' && activeFilter !== block.category;
-            const isSelected = selectedBlock?.id === block.id;
-
-            return (
-              <div
-                key={block.id}
-                className={`arch-block arch-block--${block.category} ${isSelected ? 'selected' : ''} ${isDimmed ? 'dimmed' : ''}`}
-                style={{
-                  left: `${block.x}%`,
-                  top: `${block.y}%`,
-                }}
-                onClick={() => setSelectedBlock(block)}
-                role="button"
-                tabIndex={0}
-                aria-label={`Block: ${block.label}`}
-              >
-                <div className="arch-block__tag mono">{block.category.toUpperCase()}</div>
-                <div className="arch-block__label">{block.label}</div>
-                {block.sublabel && <div className="arch-block__sublabel mono">{block.sublabel}</div>}
-                <div className="arch-block__tech mono">{block.tech}</div>
-              </div>
-            );
-          })}
+      {/* MODE 1: CUSTOM OFFICIAL DIAGRAM (IMAGE SHOWCASE) */}
+      {viewMode === 'diagram' && customDiagram && (
+        <div className="arch-diagram__image-container">
+          <div
+            className="arch-diagram__image-frame"
+            onClick={() => {
+              setZoomLevel(1);
+              setLightboxOpen(true);
+            }}
+            title="Click to zoom / inspect diagram in full resolution"
+          >
+            <img
+              src={customDiagram.image}
+              alt={customDiagram.title}
+              className="arch-diagram__img"
+              loading="lazy"
+            />
+          </div>
+          <p className="arch-diagram__image-caption mono">
+            {customDiagram.description} — <span style={{ color: 'var(--color-accent-green)', cursor: 'pointer' }} onClick={() => { setZoomLevel(1); setLightboxOpen(true); }}>Click to inspect full resolution ↗</span>
+          </p>
         </div>
-      </div>
+      )}
 
-      {/* Selected Node Spec Inspector Panel */}
-      {selectedBlock && (
-        <div className="arch-diagram__inspector">
-          <div className="arch-diagram__inspector-header">
-            <span className="arch-diagram__inspector-badge mono">NODE SPECIFICATION</span>
-            <span className="arch-diagram__inspector-cat mono">{selectedBlock.category.toUpperCase()}</span>
+      {/* MODE 2: INTERACTIVE SIGNAL BUS EXPLORER */}
+      {viewMode === 'bus' && (
+        <>
+          <div style={{ padding: 'var(--space-2) var(--space-6)', background: 'var(--color-bg-elevated)', borderBottom: '1px solid var(--color-border-subtle)' }}>
+            <div className="arch-diagram__filters">
+              {categories.map((c) => (
+                <button
+                  key={c.key}
+                  className={`arch-diagram__filter-btn ${activeFilter === c.key ? 'active' : ''}`}
+                  onClick={() => setActiveFilter(c.key)}
+                >
+                  {c.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <h4 className="arch-diagram__inspector-title">{selectedBlock.label}</h4>
-          <p className="arch-diagram__inspector-desc">{selectedBlock.description}</p>
+          <div className="arch-diagram__canvas-wrapper">
+            <div className="arch-diagram__canvas">
+              {/* Signal Bus Connection Lines (SVG) */}
+              <svg className="arch-diagram__lines" viewBox="0 0 1000 500" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#91E878" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#FFB547" stopOpacity="0.8" />
+                  </linearGradient>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                    <feMerge>
+                      <feMergeNode in="coloredBlur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
 
-          <div className="arch-diagram__inspector-meta">
-            <div className="arch-diagram__inspector-field">
-              <span className="mono label">Silicon / Component</span>
-              <span className="mono value">{selectedBlock.tech}</span>
+                {activeArch.connections.map((conn, idx) => {
+                  const fromBlock = activeArch.blocks.find((b) => b.id === conn.from);
+                  const toBlock = activeArch.blocks.find((b) => b.id === conn.to);
+                  if (!fromBlock || !toBlock) return null;
+
+                  const x1 = fromBlock.x * 10;
+                  const y1 = fromBlock.y * 5;
+                  const x2 = toBlock.x * 10;
+                  const y2 = toBlock.y * 5;
+                  const midX = (x1 + x2) / 2;
+
+                  return (
+                    <g key={idx} className="arch-diagram__connection-group">
+                      <path
+                        d={`M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`}
+                        className="arch-diagram__path-bg"
+                      />
+                      <path
+                        d={`M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`}
+                        className="arch-diagram__path-active"
+                        filter="url(#glow)"
+                      />
+                      {conn.label && (
+                        <text
+                          x={midX}
+                          y={(y1 + y2) / 2 - 8}
+                          className="arch-diagram__path-label"
+                          textAnchor="middle"
+                        >
+                          {conn.label} ({conn.bus})
+                        </text>
+                      )}
+                    </g>
+                  );
+                })}
+              </svg>
+
+              {/* Architecture Blocks */}
+              {activeArch.blocks.map((block) => {
+                const isDimmed = activeFilter !== 'all' && activeFilter !== block.category;
+                const isSelected = selectedBlock?.id === block.id;
+
+                return (
+                  <div
+                    key={block.id}
+                    className={`arch-block arch-block--${block.category} ${isSelected ? 'selected' : ''} ${isDimmed ? 'dimmed' : ''}`}
+                    style={{ left: `${block.x}%`, top: `${block.y}%` }}
+                    onClick={() => setSelectedBlock(block)}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className="arch-block__header">
+                      <span className="arch-block__cat mono">{block.category}</span>
+                      <span className="arch-block__dot" />
+                    </div>
+                    <div className="arch-block__label">{block.label}</div>
+                    {block.sublabel && <div className="arch-block__sublabel">{block.sublabel}</div>}
+                    <div className="arch-block__tech mono">{block.tech}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Node Inspector Bar */}
+          {selectedBlock && (
+            <div className="arch-diagram__inspector">
+              <div className="arch-diagram__inspector-header">
+                <span className="mono arch-diagram__inspector-title">
+                  NODE INSPECTION: {selectedBlock.label}
+                </span>
+                <span className="mono arch-diagram__inspector-tech">{selectedBlock.tech}</span>
+              </div>
+              <p className="arch-diagram__inspector-desc">{selectedBlock.description}</p>
+              {selectedBlock.interfaces && (
+                <div className="arch-diagram__inspector-interfaces">
+                  <span className="mono label">Interfaces & Buses:</span>
+                  <div className="arch-diagram__inspector-tags">
+                    {selectedBlock.interfaces.map((bus) => (
+                      <span key={bus} className="arch-diagram__inspector-tag mono">
+                        {bus}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* FULL-RESOLUTION LIGHTBOX MODAL */}
+      {lightboxOpen && customDiagram && (
+        <div className="image-viewer-overlay" onClick={() => setLightboxOpen(false)}>
+          <div className="image-viewer" onClick={(e) => e.stopPropagation()}>
+            <div className="image-viewer__bar">
+              <span className="mono image-viewer__counter">{customDiagram.title}</span>
+
+              <div className="image-viewer__zoom-controls">
+                <button className="image-viewer__btn" onClick={handleZoomOut} title="Zoom Out">
+                  -
+                </button>
+                <span className="mono zoom-text">{Math.round(zoomLevel * 100)}%</span>
+                <button className="image-viewer__btn" onClick={handleZoomIn} title="Zoom In">
+                  +
+                </button>
+                <button className="image-viewer__btn mono" onClick={handleResetZoom}>
+                  Reset
+                </button>
+              </div>
+
+              <button
+                className="image-viewer__close"
+                onClick={() => setLightboxOpen(false)}
+                aria-label="Close diagram viewer"
+              >
+                ✕
+              </button>
             </div>
 
-            {selectedBlock.interfaces && (
-              <div className="arch-diagram__inspector-field">
-                <span className="mono label">Supported Interfaces & Busses</span>
-                <div className="arch-diagram__inspector-tags">
-                  {selectedBlock.interfaces.map((iface) => (
-                    <span key={iface} className="arch-diagram__inspector-tag mono">{iface}</span>
-                  ))}
-                </div>
-              </div>
-            )}
+            <div className="image-viewer__stage" style={{ overflow: 'auto' }}>
+              <img
+                src={customDiagram.image}
+                alt={customDiagram.title}
+                style={{
+                  transform: `scale(${zoomLevel})`,
+                  transformOrigin: 'top center',
+                  transition: 'transform 0.15s ease-out',
+                  maxWidth: '90%',
+                  maxHeight: zoomLevel === 1 ? '82vh' : 'none',
+                  objectFit: 'contain',
+                  background: '#ffffff',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '8px',
+                }}
+              />
+            </div>
           </div>
         </div>
       )}

@@ -228,8 +228,6 @@ export const staticProjects: StaticProject[] = [
     category: 'software',
     stage: 'prototype',
     githubUrl: 'https://github.com/Agustasvj/SIM_WHEEL1',
-    modelUrl: './models/PORTABLE_WHEEL.obj',
-    modelRotation: [-90, 0, 0],
     technologies: ['Python 3.10+', 'FastAPI', 'ViGEmBus (Windows)', 'Linux uinput', 'HTML5 Gyroscope API', 'Assetto Corsa Telemetry', 'pywebview'],
     objective: 'Turn any smartphone into a responsive steering wheel, pedal set, and custom button box with sub-millisecond input response, 60Hz game telemetry feedback, and zero external hardware required.',
     features: [
@@ -246,11 +244,6 @@ export const staticProjects: StaticProject[] = [
         src: './assets/images/sim-wheel-preview.png',
         alt: 'VForce Sim Wheel dashboard and profile configuration',
         caption: 'VForce Sim Wheel — PC dashboard with profile settings for Assetto Corsa, steering angle calibration, and layout builder.',
-      },
-      {
-        src: './assets/images/handheld-controller-iso.png',
-        alt: 'Isometric view of 3D printed wheel enclosure',
-        caption: 'Optional ergonomic 3D CAD enclosure (PORTABLE_WHEEL) for physical phone mounting.',
       },
     ],
   },

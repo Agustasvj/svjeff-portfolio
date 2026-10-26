@@ -52,7 +52,7 @@ export default function ProjectWorkspace({ project, onClose }: ProjectWorkspaceP
 
   // Determine interactive viewer capabilities
   const isPCBProject = project.category === 'pcb';
-  const hasCADModel = Boolean(project.modelUrl) || ['sxs-spaceframe', 'mtb-frame', 'sim-wheel', 'handheld-controller'].includes(project.id);
+  const hasCADModel = Boolean(project.modelUrl) || ['sxs-spaceframe', 'mtb-frame', 'handheld-controller'].includes(project.id);
   const hasArchDiagram = ['vforce-txrx', 'afyalink', 'sim-wheel'].includes(project.id);
 
   return (
@@ -296,29 +296,20 @@ export default function ProjectWorkspace({ project, onClose }: ProjectWorkspaceP
                   )}
                 </>
               ) : hasArchDiagram ? (
-                <>
-                  <ArchitectureDiagram defaultProjectId={project.id} />
-                  {project.id === 'vforce-txrx' && (
-                    <div style={{ marginTop: 'var(--space-6)' }}>
-                      <ThreeDViewer
-                        modelType="esp32"
-                        title="ESP32 Wireless Receiver Hardware (3D View)"
-                        onExit={() => setActiveTab('overview')}
-                      />
-                    </div>
-                  )}
-                </>
+                <ArchitectureDiagram defaultProjectId={project.id} />
               ) : (
                 <WebPreview projectTitle={project.title} />
               )}
 
-              {/* Auxiliary Git Graph for firmware / software insight */}
-              <div style={{ marginTop: 'var(--space-6)' }}>
-                <GitHistoryDiagram
-                  repoName={project.githubUrl ? project.githubUrl.split('/').pop()?.replace('.git', '') || project.id : project.id}
-                  defaultBranch="main"
-                />
-              </div>
+              {/* Live Git Graph only for projects hosted on GitHub */}
+              {project.githubUrl && (
+                <div style={{ marginTop: 'var(--space-6)' }}>
+                  <GitHistoryDiagram
+                    repoName={project.githubUrl.split('/').pop()?.replace('.git', '') || project.id}
+                    defaultBranch="main"
+                  />
+                </div>
+              )}
             </div>
           )}
 

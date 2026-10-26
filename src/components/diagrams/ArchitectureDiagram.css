@@ -316,3 +316,79 @@
     padding: var(--space-2) var(--space-3);
   }
 }
+
+/* User Diagram Showcase */
+.arch-diagram__image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--color-bg-primary);
+  padding: var(--space-6);
+  position: relative;
+  min-height: 400px;
+}
+
+.arch-diagram__image-frame {
+  max-width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+  cursor: zoom-in;
+  background: #ffffff;
+  padding: var(--space-2);
+  transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.arch-diagram__image-frame:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5), 0 0 24px rgba(145, 232, 120, 0.15);
+}
+
+.arch-diagram__img {
+  display: block;
+  width: 100%;
+  max-height: 560px;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
+.arch-diagram__image-caption {
+  margin-top: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  text-align: center;
+  max-width: 760px;
+  line-height: var(--leading-normal);
+}
+
+.arch-diagram__view-toggle {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.arch-diagram__toggle-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.arch-diagram__toggle-btn:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-secondary);
+}
+
+.arch-diagram__toggle-btn.active {
+  background: var(--color-accent-green-dim);
+  border-color: var(--color-accent-green);
+  color: var(--color-accent-green);
+  font-weight: var(--weight-bold);
+}
